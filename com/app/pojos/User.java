@@ -5,11 +5,14 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "User_Tb")
-@JsonIgnoreProperties(value = {"feedBackList","reportList","addr", "mgr"})
+@JsonIgnoreProperties(value= {"feedBackList","eventList","mgr"})
 public class User 
 {
 	private Integer userId;
@@ -20,10 +23,9 @@ public class User
 	private UserRole role;
 	private String mobNo;
 	private Address addr;
-	private List<Feedback> feedBackList =  new ArrayList<>();
-	private List<Event> eventList =  new ArrayList<>();
+	private List<Feedback> feedBackList = new ArrayList<>();
+	private List<Event> eventList = new ArrayList<>();
 	private Manager mgr;
-
 	public User() {
 		// TODO Auto-generated constructor stub
 	}
@@ -113,7 +115,7 @@ public class User
 	public void setAddr(Address addr) {
 		this.addr = addr;
 	}
-	@OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	public List<Feedback> getFeedBackList() {
 		return feedBackList;
 	}
@@ -121,7 +123,8 @@ public class User
 	public void setFeedBackList(List<Feedback> feedBackList) {
 		this.feedBackList = feedBackList;
 	}
-	@OneToMany(mappedBy = "user",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
 	public List<Event> getEventList() {
 		return eventList;
 	}
@@ -137,7 +140,27 @@ public class User
 	public void setMgr(Manager mgr) {
 		this.mgr = mgr;
 	}
-	//convenience methods
+//cm
+	public void addAddress(Address a)
+	{
+		this.addr = a;
+		a.setUser(this);
+	}
+	public void removeAddress(Address a)
+	{
+		addr = null;
+		a.setUser(null);
+	}
+	public void addFeedback(Feedback f)
+	{
+		feedBackList.add(f);
+		f.setUser(this);
+	}
+	public void removeFeedback(Feedback f)
+	{
+		feedBackList.remove(f);
+		f.setUser(null);
+	}
 	public void addEvents(Event e) 
 	{
 		eventList.add(e);
@@ -160,10 +183,11 @@ public class User
 	}
 	@Override
 	public String toString() {
-		return "User [userId=" + userId + ", name=" + name + ", email=" + email + ", password=" + password
-				+ ", confirmPassword=" + confirmPassword + ", role=" + role + ", mobNo=" + mobNo 
-				+ "]";
+		return "User [name=" + name + ", email=" + email + ", password=" + password + ", confirmPassword="
+				+ confirmPassword + ", role=" + role + ", mobNo=" + mobNo + "]";
 	}
+
+	
 
 	
 	

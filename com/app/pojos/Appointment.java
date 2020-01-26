@@ -4,11 +4,14 @@ import java.util.Date;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity
 @Table(name = "Appointment_Tb")
 public class Appointment 
 {
 	private Integer appointmentId;
+	@JsonFormat(pattern = "yyyy-MM-dd",timezone="IST")
 	private Date appointmentDate;
 	private Event event;
 	private Manager mgr;

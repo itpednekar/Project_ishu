@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "Manager_Tb")
+@JsonIgnoreProperties(value = {"eventDesc","appointmentList"})
 public class Manager {
 	private Integer managerId;
 	private User user;

@@ -44,7 +44,6 @@ public class FoodSubMenu
 	public void setCost(double cost) {
 		this.cost = cost;
 	}
-
 	@ManyToOne
 	@JoinColumn(name = "food_id")
 	public Food getFood() {
@@ -53,9 +52,11 @@ public class FoodSubMenu
 	public void setFood(Food food) {
 		this.food = food;
 	}
+
 	@Override
 	public String toString() {
-		return "FoodSubMenu [foodSubMenuId=" + foodSubMenuId + ", subMenu=" + subMenu + "]";
+		return "FoodSubMenu [foodSubMenuId=" + foodSubMenuId + ", subMenu=" + subMenu + ", cost=" + cost + "]";
 	}
+	
 	
 }

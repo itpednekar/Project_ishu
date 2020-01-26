@@ -1,15 +1,24 @@
 package com.app.pojos;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.*;
+
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "EventDesc_Tb")
+@JsonIgnoreProperties(value = {"event","mgr","eventlist"})
 public class EventDesc 
 {
 	private Integer eventDescId;
 	private String eventName;
 	private double eventCost;
-	private Event event;
+	private List<Event> eventlist = new ArrayList<Event>();
 	private Manager mgr;
 	public EventDesc()
 	{
@@ -47,37 +56,43 @@ public class EventDesc
 		this.eventCost = eventCost;
 	}
 
-	@OneToOne(mappedBy = "eventDesc",cascade = CascadeType.ALL)
-	public Event getEvent() {
-		return event;
+	@OneToMany(mappedBy = "eventDesc",cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	public List<Event> getEventlist() {
+		return eventlist;
 	}
-	public void setEvent(Event event) {
-		this.event = event;
+
+	public void setEventlist(List<Event> eventlist) {
+		this.eventlist = eventlist;
 	}
+	
 	@OneToOne
 	@JoinColumn(name = "manager_id")
 	public Manager getMgr() {
 		return mgr;
 	}
+	
 	public void setMgr(Manager mgr) {
 		this.mgr = mgr;
 	}
-     //convinience methods
-	public void addEvent(Event e)
-	{
-		this.event = e;
-		e.setEventDesc(this);
-	}
-	public void removeEvent(Event e)
-	{
-		this.event = null;
-		e.setEventDesc(null);
-	}
-	@Override
-	public String toString() {
-		return "EventDesc [eventDescId=" + eventDescId + ", eventName=" + eventName + ", eventCost=" + eventCost
-				+ ", event=" + event + ", mgr=" + mgr + "]";
-	}
+	//convinience methods
+		public void addEvent(Event e)
+		{
+			eventlist.add(e);
+			e.setEventDesc(this);
+		}
+		public void removeEvent(Event e)
+		{
+			eventlist.remove(e);
+			e.setEventDesc(null);
+		}
+
+		@Override
+		public String toString() {
+			return "EventDesc [eventDescId=" + eventDescId + ", eventName=" + eventName + ", eventCost=" + eventCost
+					+ "]";
+		}
+	
 	
 	
 	

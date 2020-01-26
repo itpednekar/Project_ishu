@@ -3,12 +3,16 @@ package com.app.pojos;
 import java.util.Date;
 
 import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "Feedback_Tb")
+//@JsonIgnoreProperties(value= {"user"})
 public class Feedback {
 	private Integer feedbackId;
 	private String desc;
+	@JsonFormat(pattern = "yyyy-MM-dd",timezone="IST")
 	private Date feedbackDate;
 	private User user;
 	public Feedback() {

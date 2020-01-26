@@ -5,13 +5,19 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Table(name = "VenueCity_Tb")
+@JsonIgnoreProperties(value = {"locList"})
 public class VenueCity 
 {
 	private Integer venueCityId;
 	private String venueCityName;
-	private List<Location> locList =  new ArrayList<>();
+	private List<Location> locList = new ArrayList<>();
 	public VenueCity() {
 		// TODO Auto-generated constructor stub
 	}
@@ -35,26 +41,25 @@ public class VenueCity
 	public void setVenueCityName(String venueCityName) {
 		this.venueCityName = venueCityName;
 	}
-	@OneToMany(mappedBy = "venueCity",cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "venueCity",cascade = CascadeType.ALL, orphanRemoval = true)
+	@LazyCollection(LazyCollectionOption.FALSE)
 	public List<Location> getLocList() {
 		return locList;
 	}
 	public void setLocList(List<Location> locList) {
 		this.locList = locList;
 	}
-	
-	//CONVENIENCE METHODS
-	public void addLocation(Location lc)
+	//cm
+	public void addLocation(Location loc)
 	{
-		this.locList.add(lc);
-		lc.setVenueCity(this);
+		locList.add(loc);
+		loc.setVenueCity(this);
 	}
-	public void removeLocation(Location lc)
+	public void removeLocation(Location loc)
 	{
-		this.locList.remove(lc);
-		lc.setVenueCity(null);
+		locList.remove(loc);
+		loc.setVenueCity(null);
 	}
-	
 	@Override
 	public String toString() {
 		return "VenueCity [venueCityId=" + venueCityId + ", venueCityName=" + venueCityName + "]";

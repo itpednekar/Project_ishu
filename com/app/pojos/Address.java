@@ -31,7 +31,6 @@ public class Address {
 	public void setAddressId(Integer addressId) {
 		this.addressId = addressId;
 	}
-	
 	public String getAddress() {
 		return address;
 	}
@@ -61,7 +60,8 @@ public class Address {
 	}
 	@Override
 	public String toString() {
-		return "Address [addressId=" + addressId + ", address=" +address + ", state=" + state + ", pinCode=" + pinCode+"]";
+		return "Address [addressId=" + addressId + ", address=" + address + ", state=" + state + ", pinCode=" + pinCode
+				+ ", user=" + user + "]";
 	}
 	
 	

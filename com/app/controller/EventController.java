@@ -5,18 +5,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.app.pojos.Event;
 import com.app.pojos.EventDesc;
+import com.app.pojos.Food;
+import com.app.pojos.FoodSubMenu;
 import com.app.pojos.Location;
 import com.app.pojos.User;
 import com.app.pojos.VenueCity;
 import com.app.service.IClientService;
 import com.app.service.IEventService;
+import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 
 @RestController
 @CrossOrigin
@@ -66,5 +71,29 @@ public class EventController
 			 return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	 }
+	 @GetMapping("getfoodsubmenubyid/{foodSubMenuId}")
+	 public ResponseEntity<?> getFoodSubMenuById(@PathVariable int foodSubMenuId)
+	 {
+		 System.out.println("in getFoodSubMenuById()");
+		 try {
+			 return new ResponseEntity<FoodSubMenu>(eventService.getFoodSubMenuById(foodSubMenuId), HttpStatus.OK);
+		 } catch (RuntimeException e) {
+			e.printStackTrace();
+			return new ResponseEntity<Void>( HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	 }
+	 
+	 @PutMapping("/editfoodsubmenu")
+	 public ResponseEntity<?> editFoodSubMenu(@RequestBody FoodSubMenu foodSubMenu)
+	 {
+		 System.out.println("in editFoodSubMenu()");
+		 try {
+			 return new ResponseEntity<FoodSubMenu> (eventService.editFoodSubMenu(foodSubMenu), HttpStatus.OK);
+		 } catch (RuntimeException e) {
+			e.printStackTrace();
+			return new ResponseEntity<Void> (HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	 }
+	
 	 
 }

@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.app.pojos.Event;
 import com.app.pojos.EventDesc;
+import com.app.pojos.Food;
+import com.app.pojos.FoodSubMenu;
 import com.app.pojos.Location;
 import com.app.pojos.VenueCity;
 
@@ -64,6 +66,20 @@ public class EventDaoImpl implements IEventDao
 		return sf.getCurrentSession().get(EventDesc.class, eventdesc_id);
 	}
 
-	
+	@Override
+	public FoodSubMenu getFoodSubMenuById(int id) {
+		return sf.getCurrentSession().get(FoodSubMenu.class, id);
+	}
 
+	@Override
+	public FoodSubMenu editFoodSubMenu(FoodSubMenu foodSubMenu) 
+	{
+		System.out.println(foodSubMenu.getFood());
+		Food food = foodSubMenu.getFood();		
+		sf.getCurrentSession().update(foodSubMenu);
+		sf.getCurrentSession().update(food);
+		return foodSubMenu;
+	}
+
+	
 }

@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity
 @Table(name = "Transaction_Tb")
 public class Transaction 
@@ -12,8 +14,10 @@ public class Transaction
 	private TransactionType tranType;
 	private boolean paymentStatus;
 	private double advanceAmt;
+	@JsonFormat(pattern = "yyyy-MM-dd",timezone="IST")
 	private Date advanceDate;
 	private double remainingAmt;
+	@JsonFormat(pattern = "yyyy-MM-dd",timezone="IST")
 	private Date finalTransDate;
 	private double totalCost;
 	private Event event;

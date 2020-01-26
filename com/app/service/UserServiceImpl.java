@@ -8,7 +8,7 @@ import com.app.dao.IUserDao;
 import com.app.pojos.User;
 
 @Service
-
+@Transactional
 public class UserServiceImpl implements IUserService
 {
 	@Autowired

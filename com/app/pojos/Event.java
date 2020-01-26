@@ -6,11 +6,19 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Table(name = "Event_Tb")
+@JsonIgnoreProperties(value= {"user","eventDesc","transaction","foodList","loc","appoint","report"})
 public class Event 
 {
 	private Integer eventId;
+	@JsonFormat(pattern = "yyyy-MM-dd",timezone="IST")
 	private Date eventDate;
 	private int noOfGuestsVeg;
 	private int noOfGuestsNonVeg;
@@ -149,7 +157,7 @@ public class Event
 	public void setUser(User user) {
 		this.user = user;
 	}
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "eventDesc_id")
 	public EventDesc getEventDesc() {
 		return eventDesc;
@@ -196,6 +204,7 @@ public class Event
 	}
      
 	@OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
 	public List<Food> getFoodList() {
 		return foodList;
 	}
@@ -224,6 +233,16 @@ public class Event
 	{
 		this.report = null;
 		r.setEvent(null);
+	}
+	public void addFood(Food food)
+	{
+		foodList.add(food);
+		food.setEvent(this);
+	}
+	public void removeFood(Food food)
+	{
+		foodList.remove(food);
+		food.setEvent(null);
 	}
 
 
