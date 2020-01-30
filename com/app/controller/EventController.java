@@ -1,5 +1,7 @@
 package com.app.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,13 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.app.pojos.Event;
 import com.app.pojos.EventDesc;
 import com.app.pojos.Food;
-import com.app.pojos.FoodSubMenu;
+import com.app.pojos.FoodEvent;
 import com.app.pojos.Location;
+import com.app.pojos.Transaction;
 import com.app.pojos.User;
 import com.app.pojos.VenueCity;
+import com.app.service.IAdminService;
 import com.app.service.IClientService;
 import com.app.service.IEventService;
-import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 
 @RestController
 @CrossOrigin
@@ -32,15 +35,40 @@ public class EventController
      private IEventService eventService;
 	 @Autowired
 	 private IClientService clientService;
+	 @Autowired 
+	 private IAdminService adminService;
 	 
 	
-	 @PostMapping("/bookanevent/{user_id}/{eventdesc_id}/{loc_id}")
-	 public ResponseEntity<?> bookAnEvent(@RequestBody Event e, @PathVariable int user_id,@PathVariable int loc_id ,@PathVariable int eventdesc_id)
+	 @PostMapping("/bookanevent/{user_id}/{eventdesc_id}/{loc_id}/{food_id}")
+	 public ResponseEntity<?> bookAnEvent(@RequestBody Event e, @PathVariable int user_id,@PathVariable int loc_id 
+			 							,@PathVariable int eventdesc_id, @PathVariable int food_id
+			 							)
 	 {
+		 double totleCost = 0;
+		 int mu = 0;
+		 int th = 0;
 		 Location loc = eventService.getLocationById(loc_id);
 		 EventDesc eventDesc = eventService.getEventDescById(eventdesc_id);
-		 System.out.println("in n=bookAnEvent() "+e+" User id "+user_id);
+		 Food food = adminService.getFoodTypeById(food_id);
+		 FoodEvent foodEvent = new FoodEvent();
 		 
+		 if(e.getTheme() != null)
+		 {
+			 if(e.getTheme().equals("true"))
+			 mu = 5000;
+		 }
+		 if(e.getMusicSystem() != null)
+		 {
+			 if(e.getMusicSystem().equals("true"))
+			 th = 4000;
+		 }
+		 
+		 totleCost = eventDesc.getEventCost() + mu + th + (loc.getLocationCost() + e.getNoOfGuests()*food.getCost()
+				     + e.getDecorationBudget()) * e.getEventDuration();
+		 e.setTotalCost(totleCost);
+		 System.out.println("Total cost : "+totleCost);
+		 System.out.println("in n=bookAnEvent() "+e+" User id "+user_id);
+		 food.addFoodEvent(foodEvent);
 		 System.out.println(e);
 		 try 
 		 {
@@ -49,7 +77,9 @@ public class EventController
 			u.addEvents(e);
 			eventDesc.addEvent(e);
 			Event event = eventService.bookAnEvent(e);
-		    eventService.updateEvent(event);
+			event.addFoodEvent(foodEvent);
+		    eventService.updateEvent(e);
+		    eventService.insertFoodEvent(foodEvent);
 			return new ResponseEntity<Event>(event, HttpStatus.CREATED);
 		 }
 		 catch (RuntimeException cause) {
@@ -57,7 +87,7 @@ public class EventController
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	 }
-	 
+	
 	 @PostMapping("/bookanevent")
 	 public ResponseEntity<?> listVenueCity( )
 	 {
@@ -71,29 +101,24 @@ public class EventController
 			 return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	 }
-	 @GetMapping("getfoodsubmenubyid/{foodSubMenuId}")
-	 public ResponseEntity<?> getFoodSubMenuById(@PathVariable int foodSubMenuId)
-	 {
-		 System.out.println("in getFoodSubMenuById()");
-		 try {
-			 return new ResponseEntity<FoodSubMenu>(eventService.getFoodSubMenuById(foodSubMenuId), HttpStatus.OK);
-		 } catch (RuntimeException e) {
-			e.printStackTrace();
-			return new ResponseEntity<Void>( HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	 }
 	 
-	 @PutMapping("/editfoodsubmenu")
-	 public ResponseEntity<?> editFoodSubMenu(@RequestBody FoodSubMenu foodSubMenu)
+	 @PostMapping("/paymentdetails/{eventId}")
+	 public ResponseEntity<?> paymentDetails(@RequestBody Transaction trans,@PathVariable int eventId)
 	 {
-		 System.out.println("in editFoodSubMenu()");
-		 try {
-			 return new ResponseEntity<FoodSubMenu> (eventService.editFoodSubMenu(foodSubMenu), HttpStatus.OK);
-		 } catch (RuntimeException e) {
-			e.printStackTrace();
-			return new ResponseEntity<Void> (HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	 }
+		 System.out.println("in payment details...");
+		 Event event = adminService.getEventById(eventId);
+		 SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");  
+		    Date date = new Date();  
+		 trans.setTransDate(date);
+		 event.addTrans(trans);
+		 trans.setPaymentStatus("Complete");
 	
+		 try {
+		 return new ResponseEntity<Transaction>(clientService.insertPaymentDetails(trans), HttpStatus.OK);
+		 }catch (RuntimeException e) {
+		 e.printStackTrace();
+		 return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
+		 }
+	 }
 	 
 }

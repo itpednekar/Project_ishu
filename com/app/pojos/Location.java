@@ -19,12 +19,14 @@ public class Location
 		// TODO Auto-generated constructor stub
 	}
 	
-	public Location(String locationName, double locationCost, byte[] locationImage) {
+	public Location(String locationName, double locationCost) {
 		super();
 		this.locationName = locationName;
 		this.locationCost = locationCost;
-		this.locationImage = locationImage;
+		
 	}
+
+	
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,16 +50,14 @@ public class Location
 	}
 	public void setLocationCost(double locationCost) {
 		this.locationCost = locationCost;
-	}	
+	}
 	@Lob
 	public byte[] getLocationImage() {
 		return locationImage;
 	}
-
 	public void setLocationImage(byte[] locationImage) {
 		this.locationImage = locationImage;
 	}
-
 	@OneToOne(mappedBy = "loc",cascade = CascadeType.ALL)
 	public Event getEvent() {
 		return event;

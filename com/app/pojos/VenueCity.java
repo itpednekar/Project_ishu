@@ -41,7 +41,7 @@ public class VenueCity
 	public void setVenueCityName(String venueCityName) {
 		this.venueCityName = venueCityName;
 	}
-	@OneToMany(mappedBy = "venueCity",cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "venueCity",cascade = CascadeType.ALL,orphanRemoval = true)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	public List<Location> getLocList() {
 		return locList;

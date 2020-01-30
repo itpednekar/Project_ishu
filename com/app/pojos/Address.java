@@ -2,6 +2,8 @@ package com.app.pojos;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Table(name = "Address_Tb")
 public class Address {
@@ -52,6 +54,7 @@ public class Address {
 		this.pinCode = pinCode;
 	}
 	@OneToOne(mappedBy = "addr",cascade = CascadeType.ALL)
+	@JsonBackReference 
 	public User getUser() {
 		return user;
 	}

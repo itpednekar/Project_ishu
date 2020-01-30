@@ -10,7 +10,6 @@ import com.app.dao.IAdminDao;
 import com.app.pojos.Event;
 import com.app.pojos.EventDesc;
 import com.app.pojos.Food;
-import com.app.pojos.FoodSubMenu;
 import com.app.pojos.Location;
 import com.app.pojos.Manager;
 import com.app.pojos.User;
@@ -54,10 +53,7 @@ public class AdminServiceImpl implements IAdminService {
 	public List<Food> listFoodType() {
 		return adminDao.listFoodType();
 	}
-	@Override
-	public List<FoodSubMenu> listFoodSubMenu() {
-		return adminDao.listFoodSubMenu();
-	}
+
 	@Override
 	public VenueCity insertVenueCity(VenueCity vc) {
 		return adminDao.insertVenueCity(vc);
@@ -82,15 +78,28 @@ public class AdminServiceImpl implements IAdminService {
 	public Food getFoodTypeById(int food_id) {
 		return adminDao.getFoodTypeById(food_id);
 	}
+
 	@Override
-	public FoodSubMenu insertFoodSubMenu(FoodSubMenu foodsubmenu) {
-		return adminDao.insertFoodSubMenu(foodsubmenu);
+	public List<EventDesc> listEventDesc() {
+		return adminDao.listEventDesc();
 	}
 	@Override
-	public FoodSubMenu deleteFoodSubMenu(FoodSubMenu foodSubMenu) {
-		// TODO Auto-generated method stub
-		return adminDao.deleteFoodSubMenu(foodSubMenu);
+	public Manager blockManager(Manager mgr) {
+		return adminDao.blockManager(mgr);
 	}
+	@Override
+	public EventDesc updateEventDesc(EventDesc ed) {
+		return adminDao.updateEventDesc(ed);
+	}
+	@Override
+	public EventDesc getEventDescById(int eventDescId) {
+		return adminDao.getEventDescById(eventDescId);
+	}
+	@Override
+	public Food updateFoodType(Food food) {
+		return adminDao.updateFoodType(food);
+	}
+
 	@Override
 	public VenueCity deleteVenueCity(VenueCity venueCity) {
 		// TODO Auto-generated method stub

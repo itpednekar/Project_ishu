@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import com.app.pojos.Event;
 import com.app.pojos.EventDesc;
 import com.app.pojos.Food;
-import com.app.pojos.FoodSubMenu;
 import com.app.pojos.Location;
 import com.app.pojos.Manager;
 import com.app.pojos.User;
@@ -59,12 +58,6 @@ public class AdminDaoImpl implements IAdminDao {
 		return sf.getCurrentSession().createQuery(jpql, Food.class).getResultList();
 	}
 	@Override
-	public List<FoodSubMenu> listFoodSubMenu() {
-		String jpql = "select fs from FoodSubMenu fs";
-		return sf.getCurrentSession().createQuery(jpql, FoodSubMenu.class).getResultList();
-
-	}
-	@Override
 	public VenueCity insertVenueCity(VenueCity vc) {
 		sf.getCurrentSession().persist(vc);
 		return vc;
@@ -91,15 +84,30 @@ public class AdminDaoImpl implements IAdminDao {
 	public Food getFoodTypeById(int food_id) {
 		return sf.getCurrentSession().get(Food.class,food_id);
 	}
+
 	@Override
-	public FoodSubMenu insertFoodSubMenu(FoodSubMenu foodsubmenu) {
-		sf.getCurrentSession().persist(foodsubmenu);
-		return foodsubmenu;
+	public List<EventDesc> listEventDesc() {
+		String jpql = "select ed from EventDesc ed";
+		return sf.getCurrentSession().createQuery(jpql, EventDesc.class).getResultList();
 	}
 	@Override
-	public FoodSubMenu deleteFoodSubMenu(FoodSubMenu foodSubMenu) {
-		sf.getCurrentSession().delete(foodSubMenu);
-		return foodSubMenu;
+	public Manager blockManager(Manager mgr) {
+		sf.getCurrentSession().update(mgr);
+		return mgr;
+	}
+	@Override
+	public EventDesc updateEventDesc(EventDesc ed) {
+		sf.getCurrentSession().update(ed);
+		return ed;
+	}
+	@Override
+	public EventDesc getEventDescById(int eventDescId) {
+		return sf.getCurrentSession().get(EventDesc.class, eventDescId);
+	}
+	@Override
+	public Food updateFoodType(Food food) {
+		sf.getCurrentSession().update(food);
+		return food;
 	}
 	@Override
 	public VenueCity deleteVenueCity(VenueCity venueCity) {
@@ -108,9 +116,7 @@ public class AdminDaoImpl implements IAdminDao {
 	}
 	@Override
 	public Location editLocation(Location location) {
-	 	 VenueCity venueCity	= location.getVenueCity();
 		 sf.getCurrentSession().update(location);
-	   	 sf.getCurrentSession().update(venueCity);
 		 return location;
 	}
 	@Override
@@ -122,4 +128,6 @@ public class AdminDaoImpl implements IAdminDao {
 		sf.getCurrentSession().delete(location);
 		return location;
 	}
+	
+
 }

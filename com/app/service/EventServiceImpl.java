@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.app.dao.IEventDao;
+import com.app.pojos.Appointment;
 import com.app.pojos.Event;
 import com.app.pojos.EventDesc;
-import com.app.pojos.FoodSubMenu;
+import com.app.pojos.Food;
+import com.app.pojos.FoodEvent;
 import com.app.pojos.Location;
 import com.app.pojos.VenueCity;
 
@@ -61,14 +63,14 @@ public class EventServiceImpl implements IEventService
 	}
 
 	@Override
-	public FoodSubMenu getFoodSubMenuById(int id) {
-		return eventDao.getFoodSubMenuById(id);
+	public Food updateFood(Food f) {
+		return eventDao.updateFood(f);
 	}
 
 	@Override
-	public FoodSubMenu editFoodSubMenu(FoodSubMenu foodSubMenu) {
-		// TODO Auto-generated method stub
-		return eventDao.editFoodSubMenu(foodSubMenu);
+	public FoodEvent insertFoodEvent(FoodEvent fe) {
+		return eventDao.insertFoodEvent(fe);
 	}
 
+	
 }

@@ -32,6 +32,7 @@ public class Appointment
 		this.appointmentId = appointmentId;
 	}
 	@Column(name = "appointment_date")
+	@Temporal(TemporalType.DATE)
 	public Date getAppointmentDate() {
 		return appointmentDate;
 	}

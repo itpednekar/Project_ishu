@@ -9,6 +9,7 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "User_Tb")
@@ -107,6 +108,7 @@ public class User
 		this.mobNo = mobNo;
 	}
 	@OneToOne
+	@JsonManagedReference
 	@JoinColumn(name = "address_id")
 	public Address getAddr() {
 		return addr;
@@ -132,7 +134,7 @@ public class User
 	public void setEventList(List<Event> eventList) {
 		this.eventList = eventList;
 	}
-	@OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
+	@OneToOne(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
 	public Manager getMgr() {
 		return mgr;
 	}

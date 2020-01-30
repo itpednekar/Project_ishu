@@ -12,22 +12,32 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "Food_Tb")
-@JsonIgnoreProperties(value= {"foodSbmenuList"})
+@JsonIgnoreProperties(value = {"foodEventList"})
 public class Food 
 {
 	private Integer foodId;
 	private String foodType;
 	private foodCategory category;
-	private Event event;
-	private List<FoodSubMenu> foodSbmenuList=new ArrayList<>();
+	private String foodSubMenu;
+	private double cost;
+	private List<FoodEvent> foodEventList = new ArrayList<>();
 	public Food() {
 		// TODO Auto-generated constructor stub
 	}
-	public Food(String foodCuisine, foodCategory category) {
+	
+	
+
+	public Food(Integer foodId, String foodType, foodCategory category, String foodSubMenu, double cost) {
 		super();
-		this.foodType = foodCuisine;
+		this.foodId = foodId;
+		this.foodType = foodType;
 		this.category = category;
+		this.foodSubMenu = foodSubMenu;
+		this.cost = cost;
 	}
+
+
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "food_id")
@@ -51,36 +61,52 @@ public class Food
 	public void setCategory(foodCategory category) {
 		this.category = category;
 	}
-	@ManyToOne
-	@JoinColumn(name = "event_id")
-	public Event getEvent() {
-		return event;
+	
+	public String getFoodSubMenu() {
+		return foodSubMenu;
 	}
-	public void setEvent(Event event) {
-		this.event = event;
+
+	public void setFoodSubMenu(String foodSubMenu) {
+		this.foodSubMenu = foodSubMenu;
 	}
+	
 	@OneToMany(mappedBy = "food",cascade = CascadeType.ALL)
 	@LazyCollection(LazyCollectionOption.FALSE)
-	public List<FoodSubMenu> getFoodSbmenuList() {
-		return foodSbmenuList;
+	public List<FoodEvent> getFoodEventList() {
+		return foodEventList;
 	}
-	public void setFoodSbmenuList(List<FoodSubMenu> foodSbmenuList) {
-		this.foodSbmenuList = foodSbmenuList;
+
+	
+	public double getCost() {
+		return cost;
+	}
+
+	public void setCost(double cost) {
+		this.cost = cost;
+	}
+
+	public void setFoodEventList(List<FoodEvent> foodEventList) {
+		this.foodEventList = foodEventList;
 	}
 	//cm
-	public void addFoodSubMenu(FoodSubMenu fsm)
+	public void addFoodEvent(FoodEvent foodEvent)
 	{
-		foodSbmenuList.add(fsm);
-		fsm.setFood(this);
+		foodEventList.add(foodEvent);
+		foodEvent.setFood(this);
 	}
-	public void removeFoodSubMenu(FoodSubMenu fsm)
+	public void removeFoodEvent(FoodEvent foodEvent)
 	{
-		foodSbmenuList.remove(fsm);
-		fsm.setFood(null);
+		foodEventList.remove(foodEvent);
+		foodEvent.setFood(null);
 	}
+
+
+
 	@Override
 	public String toString() {
-		return "Food [foodId=" + foodId + ", foodType=" + foodType + ", category=" + category + "]";
+		return "Food [foodId=" + foodId + ", foodType=" + foodType + ", category=" + category + ", foodSubMenu="
+				+ foodSubMenu + ", cost=" + cost + "]";
 	}
+	
 	
 }

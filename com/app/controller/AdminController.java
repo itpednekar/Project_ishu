@@ -1,8 +1,10 @@
 package com.app.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.GeneratedValue;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,21 +17,24 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.app.pojos.Address;
 import com.app.pojos.Event;
 import com.app.pojos.EventDesc;
 import com.app.pojos.Food;
-import com.app.pojos.FoodSubMenu;
 import com.app.pojos.Location;
 import com.app.pojos.Manager;
 import com.app.pojos.User;
 import com.app.pojos.UserRole;
 import com.app.pojos.VenueCity;
+import com.app.pojos.foodCategory;
 import com.app.service.IAdminService;
 import com.app.service.IClientService;
 import com.app.service.IEventService;
+import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 
 @RestController
 @CrossOrigin
@@ -40,7 +45,7 @@ public class AdminController {
 	private IAdminService adminService;
 	@Autowired
 	private IClientService clientService;
-	@Autowired 
+	@Autowired
 	private IEventService eventService;
 	
 	@PostConstruct
@@ -72,6 +77,20 @@ public class AdminController {
 				return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 			return new ResponseEntity<List<Event>>(eventList, HttpStatus.OK);
 		}catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	@GetMapping("/listeventdesc")
+	public ResponseEntity<?> listEventDesc()
+	{
+		System.out.println("in list event desc ");
+		try {
+			List<EventDesc> eventDescList = adminService.listEventDesc();
+			if(eventDescList.size() == 0)
+				return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+			return new ResponseEntity<List<EventDesc>>(eventDescList, HttpStatus.OK);
+		}catch (RuntimeException e) {
 			e.printStackTrace();
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -118,20 +137,7 @@ public class AdminController {
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	@GetMapping("/listfoodsubmenu")
-	public ResponseEntity<?> listFoodSubMenu()
-	{
-		System.out.println("in list food sub menu");
-		try {
-			List<FoodSubMenu> foodSubMenuList = adminService.listFoodSubMenu();
-			if(foodSubMenuList.size() == 0)
-				return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-			return new ResponseEntity<List<FoodSubMenu>>(foodSubMenuList, HttpStatus.OK);
-		}catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
+
 	@PostMapping("/inserteventdesc/{mgr_id}")
 	public ResponseEntity<?> insertEventDesc(@RequestBody EventDesc ed,@PathVariable int mgr_id)
 	{
@@ -190,28 +196,11 @@ public class AdminController {
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	@PostMapping("/insertlocation/{venueCity_id}")
-	public ResponseEntity<?> insertLocation(@RequestBody Location loc,@PathVariable int venueCity_id )
-	{
-		System.out.println("in insert location");
-		try {
-			VenueCity vc = adminService.getVenueCityById(venueCity_id);
-			vc.addLocation(loc);
-			if(loc != null)
-				return new ResponseEntity<Location>(adminService.insertLocation(loc), HttpStatus.OK);
-			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
-		}catch (RuntimeException e) {
-			e.printStackTrace();
-			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
-	@PostMapping("/insertfood/{event_id}")
-	public ResponseEntity<?> insertFoodType(@RequestBody Food food,@PathVariable int event_id)
+	@PostMapping("/insertfood")
+	public ResponseEntity<?> insertFoodType(@RequestBody Food food)
 	{
 		System.out.println("in insert food type");
 		try {
-			Event event = adminService.getEventById(event_id);
-			event.addFood(food);
 			if(food != null)
 				return new ResponseEntity<Food>(adminService.insertFood(food), HttpStatus.OK);
 			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
@@ -220,32 +209,66 @@ public class AdminController {
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	@PostMapping("/insertfoodsubmenu/{foodType_id}")
-	public ResponseEntity<?> insertFoodSubMenu(@RequestBody FoodSubMenu foodsubmenu,@PathVariable int foodType_id)
+
+	@GetMapping("/geteventdescbyid/{eventDescId}")
+	public ResponseEntity<?> getEventDescById(@PathVariable int eventDescId)
 	{
-		System.out.println("in insert food submenu");
+		System.out.println("in get event desc by id");
 		try {
-			Food food = adminService.getFoodTypeById(foodType_id);
-			food.addFoodSubMenu(foodsubmenu);
-			if(foodsubmenu != null)
-				return new ResponseEntity<FoodSubMenu>(adminService.insertFoodSubMenu(foodsubmenu), HttpStatus.OK);
-			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<EventDesc>(adminService.getEventDescById(eventDescId), HttpStatus.OK);
 		}catch (RuntimeException e) {
 			e.printStackTrace();
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	@DeleteMapping("/deletefoodsubmenu/{FoodSubMenu_id}")
-	public ResponseEntity<?> deleteFoodSubMenu(@PathVariable int FoodSubMenu_id)
+	@PutMapping("/updateeventdesc/{eventDescId}/{mgrId}")
+	public ResponseEntity<?> updateEventDesc(@RequestBody EventDesc ed,@PathVariable int eventDescId,@PathVariable int mgrId)
 	{
-		System.out.println("in deleteFoodSubMenu()");
-		FoodSubMenu foodSubMenu = eventService.getFoodSubMenuById(FoodSubMenu_id);
+		System.out.println("in update event desc");
+		EventDesc evd = adminService.getEventDescById(eventDescId);
+		Manager mgr = adminService.getManagerById(mgrId);
+		if(evd == null)
+			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+		double eventCost = ed.getEventCost();
+		evd.setMgr(mgr);
+		evd.setEventCost(eventCost);
+		try
+		{
+			return new ResponseEntity<EventDesc>(adminService.updateEventDesc(evd), HttpStatus.OK);
+		}
+		catch (RuntimeException e) {
+			e.printStackTrace();
+			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	@GetMapping("/getfoodtypebyid/{foodTypeId}")
+	public ResponseEntity<?> getFoodTypeById(@PathVariable int foodTypeId)
+	{
+		System.out.println("in get food type by id");
 		try {
-			return new ResponseEntity<FoodSubMenu>(adminService.deleteFoodSubMenu(foodSubMenu), HttpStatus.OK);
+			return new ResponseEntity<Food>(adminService.getFoodTypeById(foodTypeId), HttpStatus.OK);
 		}catch (RuntimeException e) {
 			e.printStackTrace();
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+	@PutMapping("/updatefoodtype")
+	public ResponseEntity<?> updateFoodType(@RequestBody Food food)
+	{
+		System.out.println("in update food type");
+		Food oldfood = adminService.getFoodTypeById(food.getFoodId());
+		if(oldfood == null)
+			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+		oldfood.setFoodType(food.getFoodType());
+		oldfood.setCategory(food.getCategory());
+		oldfood.setFoodSubMenu(food.getFoodSubMenu());
+		try {
+			return new ResponseEntity<Food>(adminService.updateFoodType(oldfood), HttpStatus.OK);
+		}catch (RuntimeException e) {
+			e.printStackTrace();
+			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
 	}
 	@DeleteMapping("/deletevenuecity/{venueCity_id}")
 	public ResponseEntity<?> deleteVenueCity(@PathVariable int venueCity_id)
@@ -259,13 +282,23 @@ public class AdminController {
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	@PutMapping("/eidtlocation")
-	public ResponseEntity<?> editLocation(@RequestBody Location location)
-	{
-		System.out.println("in editLocation()");
-		try {
-			return new ResponseEntity<Location>(adminService.editLocation(location), HttpStatus.OK);
-		}catch (RuntimeException e) {
+	@PutMapping("/editlocation/{venucityId}")
+	public ResponseEntity<?> editLocation(@RequestBody Location location,@PathVariable int venucityId)
+	{	
+		System.out.println("in edit location");
+		VenueCity vc = adminService.getVenueCityById(venucityId);
+		Location loc = adminService.getLocationById(location.getLocationId());
+		if(loc == null)
+			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+		loc.setLocationCost(location.getLocationCost());
+		loc.setLocationImage(location.getLocationImage());
+		loc.setLocationName(location.getLocationName());
+		loc.setVenueCity(vc);
+		try
+		{
+			return new ResponseEntity<Location>(adminService.editLocation(loc), HttpStatus.OK);
+		}
+		catch (RuntimeException e) {
 			e.printStackTrace();
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -293,5 +326,25 @@ public class AdminController {
 				return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 	 }
-	 
+	 @PostMapping(value = "/insertlocation",consumes = {"multipart/form-data"})
+	 public ResponseEntity<?> insertLocation(@RequestParam String locationName,@RequestParam double locationCost,
+	 @RequestParam int venuCityId,@RequestParam MultipartFile image) throws IOException
+	 {
+		 System.out.println("in insert location");
+		 try {
+		 VenueCity vc = adminService.getVenueCityById(venuCityId);
+		 byte[] image1 = image.getBytes();
+		 Location loc = new Location(locationName,locationCost);
+		 System.out.println(loc.toString());
+		 loc.setLocationImage(image1);
+		 vc.addLocation(loc);
+		 if(loc != null)
+		 return new ResponseEntity<Location>(adminService.insertLocation(loc), HttpStatus.OK);
+		 return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+		 }catch (RuntimeException e) {
+		 e.printStackTrace();
+		 return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
+		 }
+	 }
+
 }

@@ -8,7 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.app.dao.IClientDao;
 import com.app.pojos.Address;
+import com.app.pojos.Appointment;
+import com.app.pojos.EventDesc;
 import com.app.pojos.Feedback;
+import com.app.pojos.Location;
+import com.app.pojos.Transaction;
 import com.app.pojos.User;
 
 @Service
@@ -57,4 +61,28 @@ public class ClientServiceImpl implements IClientService
 	{
 		return clientDao.showClientDetails(email);
 	}
+
+	@Override
+	public List<EventDesc> listAllEventDesc() {
+		// TODO Auto-generated method stub
+		return clientDao.listAllEventDesc();
+	}
+
+	@Override
+	public List<Location> listLocationByVenueCityId(int venueCityId) {
+		// TODO Auto-generated method stub
+		return clientDao.listLocationByVenueCityId(venueCityId);
+	}
+
+	@Override
+	public Appointment bookAppointment(Appointment appoint) {
+		// TODO Auto-generated method stub
+		return clientDao.bookAppointment(appoint);
+	}
+
+	@Override
+	public Transaction insertPaymentDetails(Transaction trans) {
+		// TODO Auto-generated method stub
+		return clientDao.insertPaymentDetails(trans);
+		}
 }

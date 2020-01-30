@@ -12,13 +12,9 @@ public class Transaction
 {
 	private Integer tranId;
 	private TransactionType tranType;
-	private boolean paymentStatus;
-	private double advanceAmt;
+	private String paymentStatus;
 	@JsonFormat(pattern = "yyyy-MM-dd",timezone="IST")
-	private Date advanceDate;
-	private double remainingAmt;
-	@JsonFormat(pattern = "yyyy-MM-dd",timezone="IST")
-	private Date finalTransDate;
+	private Date transDate;
 	private double totalCost;
 	private Event event;
 	
@@ -28,15 +24,12 @@ public class Transaction
 
 	
 
-	public Transaction(TransactionType tranType, boolean paymentStatus, double advanceAmt, Date advanceDate,
-			double remainingAmt, Date finalTransDate, double totalCost) {
+	public Transaction(TransactionType tranType, String paymentStatus,Date finalTransDate, 
+		   double totalCost) {
 		super();
 		this.tranType = tranType;
 		this.paymentStatus = paymentStatus;
-		this.advanceAmt = advanceAmt;
-		this.advanceDate = advanceDate;
-		this.remainingAmt = remainingAmt;
-		this.finalTransDate = finalTransDate;
+		this.transDate = finalTransDate;
 		this.totalCost = totalCost;
 	}
 
@@ -62,59 +55,35 @@ public class Transaction
 		this.tranType = tranType;
 	}
 	
-	public boolean isPaymentStatus() {
+	public String isPaymentStatus() {
 		return paymentStatus;
 	}
-
-
-
-	public void setPaymentStatus(boolean paymentStatus) {
+	public void setPaymentStatus(String paymentStatus) {
 		this.paymentStatus = paymentStatus;
 	}
 
-
-
-	public double getAdvanceAmt() {
-		return advanceAmt;
-	}
-
-	public void setAdvanceAmt(double advanceAmt) {
-		this.advanceAmt = advanceAmt;
-	}
-
 	@Temporal(TemporalType.TIMESTAMP)
-	public Date getAdvanceDate() {
-		return advanceDate;
+	public Date getTransDate() {
+		return transDate;
 	}
 
-	public void setAdvanceDate(Date advanceDate) {
-		this.advanceDate = advanceDate;
+	public void setTransDate(Date finalTransDate) {
+		this.transDate = finalTransDate;
 	}
 
-	public double getRemainingAmt() {
-		return remainingAmt;
-	}
-
-	public void setRemainingAmt(double remainingAmt) {
-		this.remainingAmt = remainingAmt;
-	}
-
-	@Temporal(TemporalType.TIMESTAMP)
-	public Date getFinalTransDate() {
-		return finalTransDate;
-	}
-
-	public void setFinalTransDate(Date finalTransDate) {
-		this.finalTransDate = finalTransDate;
-	}
-
+	
 	public double getTotalCost() {
 		return totalCost;
 	}
 
+
+
 	public void setTotalCost(double totalCost) {
 		this.totalCost = totalCost;
 	}
+
+
+
 	@OneToOne
 	@JoinColumn(name = "event_id")
 	public Event getEvent() {
@@ -125,12 +94,14 @@ public class Transaction
 		this.event = event;
 	}
 
+
+
 	@Override
 	public String toString() {
-		return "Transaction [tranId=" + tranId + ", tranType=" + tranType + ", advanceAmt=" + advanceAmt
-				+ ", advanceDate=" + advanceDate + ", remainingAmt=" + remainingAmt + ", finalTransDate=" + finalTransDate
-				+ ", totalCost=" + totalCost + "]";
+		return "Transaction [tranId=" + tranId + ", tranType=" + tranType + ", paymentStatus=" + paymentStatus
+				+ ", finalTransDate=" + transDate + ", totalCost=" + totalCost + "]";
 	}
+
 	
 	
 	

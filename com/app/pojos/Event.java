@@ -14,46 +14,39 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "Event_Tb")
-@JsonIgnoreProperties(value= {"user","eventDesc","transaction","foodList","loc","appoint","report"})
+@JsonIgnoreProperties(value= {"user","eventDesc","transaction","foodEventList","loc","appoint","report"})
 public class Event 
 {
 	private Integer eventId;
 	@JsonFormat(pattern = "yyyy-MM-dd",timezone="IST")
 	private Date eventDate;
-	private int noOfGuestsVeg;
-	private int noOfGuestsNonVeg;
+	private int noOfGuests;
 	private int eventDuration;
 	private double decorationBudget;
 	private String theme;
 	private String musicSystem;
-	private double costWithoutDiscount;
-	private int discount;
-	private double costWithDiscount;
+	private double totalCost;
 	private User user;
 	private EventDesc eventDesc;
 	private Transaction transaction;
-	private List<Food> foodList = new ArrayList<>();
 	private Location loc;
 	private Appointment appoint;
 	private Report report;
+	private List<FoodEvent> foodEventList = new ArrayList<>();
 	public Event() {
 		// TODO Auto-generated constructor stub
 	}
 	
-	
-	public Event(Date eventDate, int noOfGuestsVeg, int noOfGuestsNonVeg, int eventDuration, double decorationBudget,
-			String theme, String musicSystem, double costWithoutDiscount, int discount, double costWithDiscount) {
+	public Event(Date eventDate, int noOfGuests, int eventDuration, double decorationBudget,
+			String theme, String musicSystem, double totalCost) {
 		super();
 		this.eventDate = eventDate;
-		this.noOfGuestsVeg = noOfGuestsVeg;
-		this.noOfGuestsNonVeg = noOfGuestsNonVeg;
+		this.noOfGuests = noOfGuests;
 		this.eventDuration = eventDuration;
 		this.decorationBudget = decorationBudget;
 		this.theme = theme;
 		this.musicSystem = musicSystem;
-		this.costWithoutDiscount = costWithoutDiscount;
-		this.discount = discount;
-		this.costWithDiscount = costWithDiscount;
+		this.totalCost = totalCost;
 	}
 
 
@@ -75,24 +68,14 @@ public class Event
 	public void setEventDate(Date eventDate) {
 		this.eventDate = eventDate;
 	}
-	@Column(name = "no_of_vegGuests")
-	public int getNoOfGuestsVeg() {
-		return noOfGuestsVeg;
+	
+	public int getNoOfGuests() {
+		return noOfGuests;
 	}
 
 
-	public void setNoOfGuestsVeg(int noOfGuestsVeg) {
-		this.noOfGuestsVeg = noOfGuestsVeg;
-	}
-
-	@Column(name = "no_of_NonVegGuests")
-	public int getNoOfGuestsNonVeg() {
-		return noOfGuestsNonVeg;
-	}
-
-
-	public void setNoOfGuestsNonVeg(int noOfGuestsNonVeg) {
-		this.noOfGuestsNonVeg = noOfGuestsNonVeg;
+	public void setNoOfGuests(int noOfGuests) {
+		this.noOfGuests = noOfGuests;
 	}
 
 
@@ -127,25 +110,11 @@ public class Event
 	}
 
 
-	@Column(name = "cost_without_discount")
-	public double getCostWithoutDiscount() {
-		return costWithoutDiscount;
+	public double getTotalCost() {
+		return totalCost;
 	}
-	public void setCostWithoutDiscount(double costWithoutDiscount) {
-		this.costWithoutDiscount = costWithoutDiscount;
-	}
-	public int getDiscount() {
-		return discount;
-	}
-	public void setDiscount(int discount) {
-		this.discount = discount;
-	}
-	@Column(name = "cost_with_discount")
-	public double getCostWithDiscount() {
-		return costWithDiscount;
-	}
-	public void setCostWithDiscount(double costWithDiscount) {
-		this.costWithDiscount = costWithDiscount;
+	public void setTotalCost(double totalCost) {
+		this.totalCost = totalCost;
 	}
 	@ManyToOne
 	@JoinColumn(name = "user_id")
@@ -203,16 +172,16 @@ public class Event
 		this.report = report;
 	}
      
-	@OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "event",cascade = CascadeType.ALL)
 	@LazyCollection(LazyCollectionOption.FALSE)
-	public List<Food> getFoodList() {
-		return foodList;
+	public List<FoodEvent> getFoodEventList() {
+		return foodEventList;
+	}
+	public void setFoodEventList(List<FoodEvent> foodEventList) {
+		this.foodEventList = foodEventList;
 	}
 
-	public void setFoodList(List<Food> foodList) {
-		this.foodList = foodList;
-	}
-	
+
 	//convenience methods
 	public void addAppointment(Appointment a)
 	{
@@ -234,25 +203,36 @@ public class Event
 		this.report = null;
 		r.setEvent(null);
 	}
-	public void addFood(Food food)
+	public void addFoodEvent(FoodEvent foodEvent)
 	{
-		foodList.add(food);
-		food.setEvent(this);
+		foodEventList.add(foodEvent);
+		foodEvent.setEvent(this);
 	}
-	public void removeFood(Food food)
+	public void removeFoodEvent(FoodEvent foodEvent)
 	{
-		foodList.remove(food);
-		food.setEvent(null);
+		foodEventList.remove(foodEvent);
+		foodEvent.setEvent(null);
 	}
-
+	public void addTrans(Transaction t)
+	{
+	this.transaction = t;
+	t.setEvent(this);
+	}
+	public void removeTrans(Transaction t)
+	{
+	this.transaction = null;
+	t.setEvent(null);;
+	}
 
 	@Override
 	public String toString() {
-		return "Event [eventId=" + eventId + ", eventDate=" + eventDate + ", noOfGuestsVeg=" + noOfGuestsVeg
-				+ ", noOfGuestsNonVeg=" + noOfGuestsNonVeg + ", eventDuration=" + eventDuration + ", decorationBudget="
-				+ decorationBudget + ", theme=" + theme + ", musicSystem=" + musicSystem + ", costWithoutDiscount="
-				+ costWithoutDiscount + ", discount=" + discount + ", costWithDiscount=" + costWithDiscount + "]";
+		return "Event [eventId=" + eventId + ", eventDate=" + eventDate + ", noOfGuests=" + noOfGuests
+				+ ", eventDuration=" + eventDuration + ", decorationBudget=" + decorationBudget + ", theme=" + theme
+				+ ", musicSystem=" + musicSystem + ", totalCost=" + totalCost + "]";
 	}
+
+
+	
 
 	
 	
