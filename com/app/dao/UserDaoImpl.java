@@ -18,5 +18,24 @@ public class UserDaoImpl implements IUserDao
 		return sf.getCurrentSession().createQuery(jpql, User.class).setParameter("em", email)
 				.setParameter("pa",password).getSingleResult();
 	}
+	@Override
+	public User getUser(String email) {
+	String jpql = "select u from User u where u.email=:em";
+	return sf.getCurrentSession().createQuery(jpql, User.class).setParameter("em", email)
+	.getSingleResult();
+	}
+
+	@Override
+	public User getUserByPassword(String password) {
+	String jpql = "select u from User u where u.password=:pa";
+	return sf.getCurrentSession().createQuery(jpql, User.class).setParameter("pa",password).getSingleResult();
+	}
+
+	@Override
+	public User changePassword(User u) {
+	sf.getCurrentSession().update(u);
+	return u;
+	}
+
 	
 }

@@ -19,4 +19,22 @@ public class UserServiceImpl implements IUserService
 		return dao.userAuthenticate(email, password);
 	}
 
+	@Override
+	public User getUser(String email) {
+		// TODO Auto-generated method stub
+		return dao.getUser(email);
+	}
+
+	@Override
+	public User getUserByPassword(String password) {
+		// TODO Auto-generated method stub
+		return dao.getUserByPassword(password);
+	}
+
+	@Override
+	public User changePassword(User u) {
+		// TODO Auto-generated method stub
+		return dao.changePassword(u);
+	}
+
 }
